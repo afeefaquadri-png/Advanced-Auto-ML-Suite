@@ -96,52 +96,38 @@
 ---
 
 ## 🏗️ Project Structure
-┌──────────────────┐
-│   User Interface │
-│   (Streamlit UI) │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│   app.py         │
-│  (Main Controller)│
-└────────┬─────────┘
-         │
-         ▼
-┌───────────────────────────────┐
-│        Router Layer            │
-│  ┌─────────────────────────┐ │
-│  │ data_router.py           │ │
-│  │ feature_router.py        │ │
-│  │ model_router.py          │ │
-│  │ experiment_router.py     │ │
-│  │ evaluation_router.py     │ │
-│  └─────────────────────────┘ │
-└────────┬──────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────┐
-│            Core ML Modules               │
-│                                         │
-│  ┌───────────────────────────────────┐  │
-│  │ data_preprocessing.py              │  │
-│  │ - Data cleaning                    │  │
-│  │ - Encoding & scaling               │  │
-│  │ - Feature engineering              │  │
-│  └───────────────────────────────────┘  │
-│                                         │
-│  ┌───────────────────────────────────┐  │
-│  │ model_training.py                  │  │
-│  │ - Train ML models                  │  │
-│  │ - Model selection                  │  │
-│  └───────────────────────────────────┘  │
-│                                         │
-│  ┌───────────────────────────────────┐  │
-│  │ evaluation.py                      │  │
-│  │ - Metrics & performance analysis   │  │
-│  │ - Confusion matrix / ROC-AUC       │  │
-│  └───────────────────────────────────┘  │
-└─────────────────────────────────────────┘
+AUTO-ML-suite/
+│
+├── app.py                     # Streamlit entry point (UI + workflow)
+├── main.py                    # Optional CLI / backend runner
+├── README.md                  # Project documentation
+├── requirements.txt           # Python dependencies
+├── .gitignore                 # Ignored files & folders
+│
+├── modules/                   # Core application package
+│   ├── __init__.py
+│   │
+│   ├── data_preprocessing.py  # Data cleaning, encoding, scaling
+│   ├── model_training.py      # ML model training & selection
+│   ├── evaluation.py          # Metrics, confusion matrix, ROC
+│   │
+│   ├── data_router.py         # Data-related routing logic
+│   ├── feature_router.py      # Feature engineering routing
+│   ├── model_router.py        # Model selection routing
+│   ├── experiment_router.py   # Experiment tracking logic
+│   └── evaluation_router.py   # Evaluation routing
+│
+├── assets/                    # (Optional) images, diagrams, screenshots
+│   └── architecture.png
+│
+├── data/                      # (Optional) sample datasets
+│   └── sample.csv
+│
+├── tests/                     # (Optional) unit tests
+│   └── test_model_training.py
+│
+└── .streamlit/                # (Optional) Streamlit config
+    └── config.toml
 
 ---
 
