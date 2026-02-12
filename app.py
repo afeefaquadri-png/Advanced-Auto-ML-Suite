@@ -506,9 +506,15 @@ with st.sidebar:
 
 
 # ─── TABS ─────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📁  Data", "🔧  Preprocess", "🚀  Train", "📊  Evaluate", "🎯  Predict"
+tab1, tab_eda, tab2, tab3, tab4, tab5 = st.tabs([
+    "📁  Data",
+    "📊  EDA",
+    "🔧  Preprocess",
+    "🚀  Train",
+    "📊  Evaluate",
+    "🎯  Predict"
 ])
+
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -678,7 +684,7 @@ with tab1:
 
         if st.button("✅ Confirm Data & Continue →", use_container_width=True):
             st.session_state.step = max(st.session_state.step, 2)
-            st.success("Data confirmed. Head to the Preprocess tab.")
+            st.success("Data confirmed. Head to EDA tab and Proceed for Preprocess Tab.")
 
     else:
         st.markdown("""
@@ -688,9 +694,127 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 2: EDA (Exploratory Data Analysis)
+# ════════════════════════════════════════════════════════════════════════════
+with tab_eda:
+    st.markdown(
+        '<div class="section-heading"><span class="icon">📊</span>Exploratory Data Analysis (EDA)</div>',
+        unsafe_allow_html=True
+    )
+
+    if st.session_state.df is None:
+        st.markdown(
+            '<div class="warn-box">⚠️ Please upload data in the <strong>Data</strong> tab first.</div>',
+            unsafe_allow_html=True
+        )
+    else:
+        df = st.session_state.df
+        target = st.session_state.target
+
+        st.markdown(
+            """
+            <div class="info-box">
+                🔍 EDA helps you understand distributions, relationships, outliers, correlations,
+                and the behavior of your target variable <strong>before preprocessing</strong>.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # ─── Basic Summary ───────────────────────────────────────────────────
+        c1, c2, c3, c4 = st.columns(4)
+        with c1:
+            st.markdown(f"<div class='metric-card'><div class='m-label'>Rows</div><div class='m-value'>{df.shape[0]:,}</div></div>", unsafe_allow_html=True)
+        with c2:
+            st.markdown(f"<div class='metric-card'><div class='m-label'>Columns</div><div class='m-value'>{df.shape[1]}</div></div>", unsafe_allow_html=True)
+        with c3:
+            st.markdown(f"<div class='metric-card'><div class='m-label'>Numerical</div><div class='m-value'>{df.select_dtypes(include=np.number).shape[1]}</div></div>", unsafe_allow_html=True)
+        with c4:
+            st.markdown(f"<div class='metric-card'><div class='m-label'>Categorical</div><div class='m-value'>{df.select_dtypes(exclude=np.number).shape[1]}</div></div>", unsafe_allow_html=True)
+
+        # ─── Missing Values ─────────────────────────────────────────────────
+        st.markdown('<div class="section-heading"><span class="icon">❓</span>Missing Values</div>', unsafe_allow_html=True)
+
+        miss = df.isna().mean().mul(100).round(2)
+        miss_df = miss[miss > 0].sort_values(ascending=False)
+
+        if miss_df.empty:
+            st.success("✅ No missing values found.")
+        else:
+            st.dataframe(
+                miss_df.reset_index().rename(columns={"index": "Column", 0: "Missing %"}),
+                use_container_width=True
+            )
+
+        # ─── Numerical Distributions ─────────────────────────────────────────
+        num_cols = df.select_dtypes(include=np.number).columns.tolist()
+
+        if num_cols:
+            st.markdown('<div class="section-heading"><span class="icon">📈</span>Numerical Feature Distributions</div>', unsafe_allow_html=True)
+
+            import matplotlib.pyplot as plt
+            import matplotlib
+            matplotlib.use("Agg")
+
+            sel_num = st.multiselect(
+                "Select numerical columns",
+                num_cols,
+                default=num_cols[:min(6, len(num_cols))]
+            )
+
+            if sel_num:
+                fig, axes = plt.subplots(len(sel_num), 1, figsize=(6, len(sel_num) * 2.2))
+                if len(sel_num) == 1:
+                    axes = [axes]
+
+                for ax, col in zip(axes, sel_num):
+                    ax.hist(df[col].dropna(), bins=30)
+                    ax.set_title(col, fontsize=9)
+
+                plt.tight_layout()
+                st.pyplot(fig)
+
+        # ─── Categorical Distributions ───────────────────────────────────────
+        cat_cols = df.select_dtypes(exclude=np.number).columns.tolist()
+
+        if cat_cols:
+            st.markdown('<div class="section-heading"><span class="icon">🏷️</span>Categorical Feature Counts</div>', unsafe_allow_html=True)
+
+            sel_cat = st.selectbox("Select categorical column", cat_cols)
+            vc = df[sel_cat].value_counts().head(20)
+            st.bar_chart(vc)
+
+        # ─── Correlation Matrix ──────────────────────────────────────────────
+        if len(num_cols) >= 2:
+            st.markdown('<div class="section-heading"><span class="icon">🔗</span>Correlation Matrix</div>', unsafe_allow_html=True)
+
+            corr = df[num_cols].corr()
+
+            fig, ax = plt.subplots(figsize=(6, 5))
+            im = ax.imshow(corr)
+            ax.set_xticks(range(len(corr)))
+            ax.set_yticks(range(len(corr)))
+            ax.set_xticklabels(corr.columns, rotation=90, fontsize=7)
+            ax.set_yticklabels(corr.columns, fontsize=7)
+            fig.colorbar(im)
+            st.pyplot(fig)
+
+        # ─── Target Analysis ────────────────────────────────────────────────
+        if target:
+            st.markdown(f'<div class="section-heading"><span class="icon">🎯</span>Target Analysis — {target}</div>', unsafe_allow_html=True)
+
+            if df[target].dtype == "object" or df[target].nunique() < 15:
+                st.bar_chart(df[target].value_counts())
+            else:
+                fig, ax = plt.subplots()
+                ax.hist(df[target].dropna(), bins=30)
+                st.pyplot(fig)
+
+
 
 # ════════════════════════════════════════════════════════════════════════════
-# TAB 2: PREPROCESS
+# TAB 3: PREPROCESS
 # ════════════════════════════════════════════════════════════════════════════
 with tab2:
     st.markdown(
@@ -852,7 +976,7 @@ with tab2:
                 )
 
 # ════════════════════════════════════════════════════════════════════════════
-# TAB 3: TRAIN
+# TAB 4: TRAIN
 # ════════════════════════════════════════════════════════════════════════════
 with tab3:
     st.markdown('<div class="section-heading"><span class="icon">🚀</span>Model Training</div>', unsafe_allow_html=True)
@@ -1025,7 +1149,7 @@ with tab3:
 
 
 # ════════════════════════════════════════════════════════════════════════════
-# TAB 4: EVALUATE
+# TAB 5: EVALUATE
 # ════════════════════════════════════════════════════════════════════════════
 with tab4:
     st.markdown('<div class="section-heading"><span class="icon">📊</span>In-Depth Model Evaluation</div>', unsafe_allow_html=True)
@@ -1190,7 +1314,7 @@ with tab4:
 
 
 # ════════════════════════════════════════════════════════════════════════════
-# TAB 5: PREDICT
+# TAB 6: PREDICT
 # ════════════════════════════════════════════════════════════════════════════
 with tab5:
     st.markdown('<div class="section-heading"><span class="icon">🎯</span>Make Predictions</div>', unsafe_allow_html=True)
@@ -1307,3 +1431,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
