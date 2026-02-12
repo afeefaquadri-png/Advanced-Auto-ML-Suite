@@ -1,6 +1,6 @@
 # ⚡ Auto-ML Suite v2.0
 
-> **Production-grade AutoML platform** — Upload data, configure a pipeline, and automatically benchmark 20+ algorithms across classification and regression tasks with deep evaluation, feature engineering, and batch prediction support.
+> **Production-grade AutoML platform** — Upload data, configure a pipeline, and automatically benchmark 20+ algorithms across classification and regression tasks with EDA report,deep evaluation, feature engineering, and batch prediction support.
 
 <div align="center">
 
@@ -19,6 +19,7 @@
 | Feature | v1.0 | v2.0 |
 |---------|------|------|
 | Algorithms | ~6 | **20+ (Classifier + Regressor)** |
+|Exploratory Data Analysis | Simple | **Graphs, Bar Charts, Confusion MAtrix**|
 | Hyperparameter Tuning | Basic | **Random + Grid Search** |
 | Evaluation Metrics | Basic | **12+ metrics + plots** |
 | Feature Engineering | None | **Selection, PCA, Polynomial, Interactions** |
@@ -29,6 +30,7 @@
 | UI | Plain | **Professional dark theme with full pipeline UX** |
 | Export | None | **Model .pkl + Results .csv download** |
 | Batch Prediction | None | **Upload CSV → Download predictions** |
+
 
 ---
 
@@ -94,30 +96,52 @@
 ---
 
 ## 🏗️ Project Structure
-
-```
-AUTO-ML-SUITE/
-├── backend/
-│   ├── main.py                     # FastAPI app entry point
-│   └── routers/
-│       ├── data_router.py          # Upload, profile, preprocess
-│       ├── model_router.py         # Train, predict, list algorithms
-│       ├── evaluation_router.py    # Full evaluation reports
-│       ├── feature_router.py       # Feature selection, PCA
-│       └── experiment_router.py    # Experiment tracking & comparison
-│
-├── frontend/
-│   └── app.py                      # Streamlit UI (5 tabs, dark theme)
-│
-├── modules/
-│   ├── model_training.py           # AutoMLTrainer + 20+ algorithms
-│   ├── data_preprocessing.py       # DataPreprocessor + FeatureEngineer + DataAnalyzer
-│   └── evaluation.py               # ClassificationEvaluator + RegressionEvaluator + charts
-│
-├── requirements.txt
-├── config.py
-└── README.md
-```
+┌──────────────────┐
+│   User Interface │
+│   (Streamlit UI) │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│   app.py         │
+│  (Main Controller)│
+└────────┬─────────┘
+         │
+         ▼
+┌───────────────────────────────┐
+│        Router Layer            │
+│  ┌─────────────────────────┐ │
+│  │ data_router.py           │ │
+│  │ feature_router.py        │ │
+│  │ model_router.py          │ │
+│  │ experiment_router.py     │ │
+│  │ evaluation_router.py     │ │
+│  └─────────────────────────┘ │
+└────────┬──────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│            Core ML Modules               │
+│                                         │
+│  ┌───────────────────────────────────┐  │
+│  │ data_preprocessing.py              │  │
+│  │ - Data cleaning                    │  │
+│  │ - Encoding & scaling               │  │
+│  │ - Feature engineering              │  │
+│  └───────────────────────────────────┘  │
+│                                         │
+│  ┌───────────────────────────────────┐  │
+│  │ model_training.py                  │  │
+│  │ - Train ML models                  │  │
+│  │ - Model selection                  │  │
+│  └───────────────────────────────────┘  │
+│                                         │
+│  ┌───────────────────────────────────┐  │
+│  │ evaluation.py                      │  │
+│  │ - Metrics & performance analysis   │  │
+│  │ - Confusion matrix / ROC-AUC       │  │
+│  └───────────────────────────────────┘  │
+└─────────────────────────────────────────┘
 
 ---
 
