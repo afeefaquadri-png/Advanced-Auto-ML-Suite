@@ -434,8 +434,8 @@ def step_class(n):
         return "active"
     return ""
 
-steps = ["Data Ingestion", "Preprocessing", "Feature Engineering", "Model Training", "Evaluation", "Prediction"]
-step_icons = ["📁", "🔧", "🔬", "🚀", "📊", "🎯"]
+steps = ["Data Ingestion","EDA", "Preprocessing", "Feature Engineering", "Model Training", "Evaluation", "Prediction"]
+step_icons = ["📁","🔍", "🔧", "🔬", "🚀", "📊", "🎯"]
 step_html = '<div class="step-bar">'
 for i, (name, icon) in enumerate(zip(steps, step_icons), 1):
     cls = step_class(i)
