@@ -96,38 +96,31 @@
 ---
 
 ## 🏗️ Project Structure
-AUTO-ML-suite/
+
+```text
+AUTO-ML-Suite/
 │
-├── app.py                     # Streamlit entry point (UI + workflow)
-├── main.py                    # Optional CLI / backend runner
-├── README.md                  # Project documentation
+├── app.py                     # Streamlit main UI application
+├── main.py                    # Optional backend / entry point
+├── README.md                  # Project documentation & overview
 ├── requirements.txt           # Python dependencies
-├── .gitignore                 # Ignored files & folders
+├── .gitignore                 # Files & folders ignored by Git
 │
-├── modules/                   # Core application package
+├── modules/                   # Core reusable Python modules
 │   ├── __init__.py
-│   │
-│   ├── data_preprocessing.py  # Data cleaning, encoding, scaling
-│   ├── model_training.py      # ML model training & selection
-│   ├── evaluation.py          # Metrics, confusion matrix, ROC
-│   │
+│   ├── data_preprocessing.py  # Data cleaning & feature engineering
+│   ├── model_training.py      # Model training & selection logic
+│   ├── evaluation.py          # Metrics & performance evaluation
 │   ├── data_router.py         # Data-related routing logic
 │   ├── feature_router.py      # Feature engineering routing
 │   ├── model_router.py        # Model selection routing
 │   ├── experiment_router.py   # Experiment tracking logic
 │   └── evaluation_router.py   # Evaluation routing
 │
-├── assets/                    # (Optional) images, diagrams, screenshots
-│   └── architecture.png
-│
-├── data/                      # (Optional) sample datasets
-│   └── sample.csv
-│
-├── tests/                     # (Optional) unit tests
-│   └── test_model_training.py
-│
-└── .streamlit/                # (Optional) Streamlit config
-    └── config.toml
+├── data/                      # (Optional) sample or raw datasets
+├── assets/                    # (Optional) diagrams & screenshots
+└── tests/                     # (Optional) unit & integration tests
+
 
 ---
 
